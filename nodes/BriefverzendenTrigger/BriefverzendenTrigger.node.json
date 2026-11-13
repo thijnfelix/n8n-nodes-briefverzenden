@@ -1,0 +1,19 @@
+{
+	"node": "n8n-nodes-briefverzenden",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Communication"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://www.briefverzenden.nl/zakelijk/api"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/thijnfelix/n8n-nodes-briefverzenden#readme"
+			}
+		]
+	},
+	"alias": ["Letter", "Post", "Postal Mail", "Snail Mail", "Registered Mail", "Print and Mail"]
+}

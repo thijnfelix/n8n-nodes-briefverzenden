@@ -1,0 +1,60 @@
+{
+	"name": "n8n-nodes-briefverzenden",
+	"version": "0.1.0",
+	"description": "n8n community node for BriefVerzenden.nl: send real postal letters (PDF) from your workflows, track their status and check your credit balance.",
+	"license": "MIT",
+	"homepage": "https://www.briefverzenden.nl/zakelijk",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"briefverzenden",
+		"post",
+		"brief",
+		"letter",
+		"mail",
+		"postal mail",
+		"registered mail",
+		"pdf"
+	],
+	"author": {
+		"name": "Thijn Felix",
+		"email": "support@briefverzenden.nl"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/thijnfelix/n8n-nodes-briefverzenden.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/BriefverzendenApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Briefverzenden/Briefverzenden.node.js",
+			"dist/nodes/BriefverzendenTrigger/BriefverzendenTrigger.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "0.55.6",
+		"eslint": "9.32.0",
+		"prettier": "3.6.2",
+		"release-it": "^21.1.0",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}

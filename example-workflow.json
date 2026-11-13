@@ -1,0 +1,197 @@
+{
+  "name": "BriefVerzenden.nl – send a letter (HTTP Request)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## BriefVerzenden.nl via the HTTP Request node\n\nWorks without the community node.\n\n**1. Credential (once)**\nIn *Check Balance*, create a credential of type **Header Auth**:\n- Name: `Authorization`\n- Value: `Bearer bv_live_…` (your API key from the portal: https://www.briefverzenden.nl/zakelijk/portal#api)\n\nUse the same credential in *Send Letter*.\n\n**2. Data**\nIn *Recipient and PDF*, enter the recipient and a public HTTPS link to your PDF (A4, max. 10 MB). The address does not need to be in the PDF.\n\n**3. Note**\nEvery letter is charged to your credit balance. The `Idempotency-Key` makes sure a retry within the same execution does not send the letter twice.\n\nAPI documentation: https://www.briefverzenden.nl/zakelijk/api",
+        "height": 520,
+        "width": 420,
+        "color": 4
+      },
+      "id": "15741ba6-03a7-45f0-a442-614e9529583d",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        -200
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e51a7713-70ec-419c-b312-42f6641875ce",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.briefverzenden.nl/api/v1/me",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bron",
+              "value": "n8n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47cad277-3eca-4e63-8990-3aece6e94ff2",
+      "name": "Check Balance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b15dc399-a0a2-443a-815d-e3a1e74ae724",
+              "name": "naam",
+              "value": "Example Ltd",
+              "type": "string"
+            },
+            {
+              "id": "a3a4f342-c740-4cab-bfbb-1c6518bb7fb0",
+              "name": "tav",
+              "value": "Accounts Payable",
+              "type": "string"
+            },
+            {
+              "id": "2a585d7f-c0e3-4752-9081-8f4d52a66e63",
+              "name": "adres",
+              "value": "Voorbeeldstraat 1",
+              "type": "string"
+            },
+            {
+              "id": "4b54c645-8d1d-435f-b5d5-bab8348a0c76",
+              "name": "postcode",
+              "value": "1234 AB",
+              "type": "string"
+            },
+            {
+              "id": "42a050cc-512f-4945-865c-39465e1a4527",
+              "name": "woonplaats",
+              "value": "Amsterdam",
+              "type": "string"
+            },
+            {
+              "id": "f750eac0-dbe8-41f3-bab9-e2981af71e7a",
+              "name": "land",
+              "value": "NL",
+              "type": "string"
+            },
+            {
+              "id": "b4f51088-3644-4e9d-8c8e-9e41521bec57",
+              "name": "pdfUrl",
+              "value": "https://www.example.com/replace-with-your-letter.pdf",
+              "type": "string"
+            },
+            {
+              "id": "5d5261c0-3fef-45a8-b6ce-0ee2e7a86519",
+              "name": "referentie",
+              "value": "invoice-2026-001",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5aeda92d-4248-434a-bf75-78a3a77a8e30",
+      "name": "Recipient and PDF",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.briefverzenden.nl/api/v1/brieven",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Bron",
+              "value": "n8n"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "=n8n-{{ $workflow.id }}-{{ $execution.id }}-{{ $itemIndex }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ontvanger\": {\n    \"naam\": {{ JSON.stringify($json.naam) }},\n    \"tav\": {{ JSON.stringify($json.tav) }},\n    \"adres\": {{ JSON.stringify($json.adres) }},\n    \"postcode\": {{ JSON.stringify($json.postcode) }},\n    \"woonplaats\": {{ JSON.stringify($json.woonplaats) }},\n    \"land\": {{ JSON.stringify($json.land) }}\n  },\n  \"pdfUrl\": {{ JSON.stringify($json.pdfUrl) }},\n  \"kleur\": false,\n  \"dubbelzijdig\": true,\n  \"aangetekend\": false,\n  \"referentie\": {{ JSON.stringify($json.referentie) }}\n}",
+        "options": {}
+      },
+      "id": "b433fe7a-5144-4be6-8418-5f27391d857e",
+      "name": "Send Letter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Balance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Balance": {
+      "main": [
+        [
+          {
+            "node": "Recipient and PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recipient and PDF": {
+      "main": [
+        [
+          {
+            "node": "Send Letter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
